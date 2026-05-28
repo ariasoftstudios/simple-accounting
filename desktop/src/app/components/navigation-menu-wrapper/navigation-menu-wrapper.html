@@ -1,0 +1,9 @@
+<nav class="bg-white border-b border-gray-200 px-6 py-2">
+  <!-- Horizontal Menu Items -->
+  <div class="flex space-x-8">
+    @for (item of menuItems; track item.title) {
+      <app-menu-item [title]="item.title" [isActive]="item.isActive" [route]="item.route">
+      </app-menu-item>
+    }
+  </div>
+</nav>

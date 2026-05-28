@@ -1,0 +1,29 @@
+<p-dialog
+  [header]="headerTitle"
+  [modal]="true"
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  (onHide)="onHide()"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '60rem', maxWidth: '95vw' }"
+  [breakpoints]="{ '1199px': '80vw', '767px': '95vw' }"
+>
+  <ng-content></ng-content>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-between w-full">
+      <p-button [label]="cancelLabel" severity="secondary" (onClick)="cancel.emit()"></p-button>
+      <div class="flex gap-2">
+        @if (resetLabel) {
+          <p-button [label]="resetLabel" severity="secondary" (onClick)="reset.emit()"></p-button>
+        }
+        <p-button
+          [label]="confirmLabel"
+          [disabled]="confirmDisabled"
+          (onClick)="confirm.emit()"
+        ></p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>

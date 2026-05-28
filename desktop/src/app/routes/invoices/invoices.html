@@ -1,0 +1,235 @@
+<invoice-filters
+  [productCategoryOptions]="productCategoryOptions()"
+  [isLoading]="isLoading()"
+  (filterSubmit)="onFilterClick($event)"
+  (filterReset)="invoices = []"
+></invoice-filters>
+
+<invoice-table
+  [invoices]="invoices"
+  [errorMessage]="errorMessage"
+  (newInvoiceClick)="openCreateInvoiceModal()"
+></invoice-table>
+
+<app-modal
+  headerTitle="Skapa faktura"
+  confirmLabel="Spara"
+  cancelLabel="Avbryt"
+  [visible]="isCreateInvoiceModalVisible()"
+  [confirmDisabled]="isCreateInvoiceSaveDisabled"
+  (visibleChange)="isCreateInvoiceModalVisible.set($event)"
+  (confirm)="onSaveCreateInvoice()"
+  (cancel)="onCancelCreateInvoice()"
+>
+  <form [formGroup]="createInvoiceForm" class="space-y-6">
+    <div class="space-y-4">
+      <h3 class="text-2xl font-semibold">Företag</h3>
+
+      <div formGroupName="invoice" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2">
+          <label for="ciInvoiceName">Namn på faktura</label>
+          <input id="ciInvoiceName" type="text" pInputText formControlName="invoiceName" />
+          @if (hasCreateInvoiceError('invoice.invoiceName', 'required')) {
+            <small class="text-red-600" role="alert">Namn på faktura är obligatoriskt.</small>
+          }
+          @if (hasCreateInvoiceError('invoice.invoiceName', 'minlength')) {
+            <small class="text-red-600" role="alert">Minst 2 tecken krävs.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciInvoiceNumber">Fakturanummer</label>
+          <input id="ciInvoiceNumber" type="text" pInputText formControlName="invoiceNumber" />
+          @if (hasCreateInvoiceError('invoice.invoiceNumber', 'required')) {
+            <small class="text-red-600" role="alert">Fakturanummer är obligatoriskt.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciCategory">Kategori</label>
+          <p-select
+            inputId="ciCategory"
+            [options]="productCategoryOptions()"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Valj kategori"
+            formControlName="category"
+          ></p-select>
+          @if (hasCreateInvoiceError('invoice.category', 'required')) {
+            <small class="text-red-600" role="alert">Kategori ar obligatorisk.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciPrice">Pris</label>
+          <p-inputNumber
+            inputId="ciPrice"
+            mode="currency"
+            currency="SEK"
+            locale="sv-SE"
+            formControlName="price"
+          ></p-inputNumber>
+          @if (hasCreateInvoiceError('invoice.price', 'required')) {
+            <small class="text-red-600" role="alert">Pris ar obligatoriskt.</small>
+          }
+          @if (hasCreateInvoiceError('invoice.price', 'min')) {
+            <small class="text-red-600" role="alert">Pris maste vara storre an 0.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciVat">Utgaende moms %</label>
+          <p-select
+            inputId="ciVat"
+            [options]="vatOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Valj moms"
+            formControlName="outgoingVat"
+          ></p-select>
+          @if (hasCreateInvoiceError('invoice.outgoingVat', 'required')) {
+            <small class="text-red-600" role="alert">Moms ar obligatorisk.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciInvoiceDate">Faktureringsdatum</label>
+          <p-datepicker inputId="ciInvoiceDate" [showIcon]="true" formControlName="invoiceDate">
+          </p-datepicker>
+          @if (hasCreateInvoiceError('invoice.invoiceDate', 'required')) {
+            <small class="text-red-600" role="alert">Faktureringsdatum ar obligatoriskt.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciDueDate">Forfallodatum</label>
+          <p-datepicker
+            inputId="ciDueDate"
+            [showIcon]="true"
+            formControlName="dueDate"
+          ></p-datepicker>
+          @if (hasCreateInvoiceError('invoice.dueDate', 'required')) {
+            <small class="text-red-600" role="alert">Forfallodatum ar obligatoriskt.</small>
+          }
+        </div>
+      </div>
+
+      <div formGroupName="company" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2">
+          <label for="ciCompanyName">Foretagsnamn</label>
+          <input id="ciCompanyName" type="text" pInputText formControlName="companyName" />
+          @if (hasCreateInvoiceError('company.companyName', 'required')) {
+            <small class="text-red-600" role="alert">Foretagsnamn ar obligatoriskt.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciOrgNumber">Org. nummer</label>
+          <input id="ciOrgNumber" type="text" pInputText formControlName="orgNumber" />
+          @if (hasCreateInvoiceError('company.orgNumber', 'required')) {
+            <small class="text-red-600" role="alert">Org. nummer ar obligatoriskt.</small>
+          }
+          @if (hasCreateInvoiceError('company.orgNumber', 'pattern')) {
+            <small class="text-red-600" role="alert">Format: XXXXXX-XXXX</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2 md:col-span-2">
+          <label for="ciCompanyPhone">Telefonnummer</label>
+          <input id="ciCompanyPhone" type="text" pInputText formControlName="phoneNumber" />
+          @if (hasCreateInvoiceError('company.phoneNumber', 'pattern')) {
+            <small class="text-red-600" role="alert">Ogiltigt telefonnummer.</small>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div formGroupName="attachments" class="space-y-3">
+      <input
+        #invoiceFileInput
+        type="file"
+        class="hidden"
+        multiple
+        aria-hidden="true"
+        (change)="onAttachmentInputChange($event)"
+      />
+
+      <p-button
+        label="Ladda upp fil"
+        severity="secondary"
+        (onClick)="invoiceFileInput.click()"
+      ></p-button>
+
+      <div class="border border-gray-200 rounded-md overflow-hidden">
+        <div
+          class="grid grid-cols-[1fr_auto_auto] gap-3 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700"
+        >
+          <span class="text-left w-12">Filnamn</span>
+          <span class="text-left w-12">Storlek</span>
+          @if (selectedAttachmentFiles && selectedAttachmentFiles.length > 0) {
+            <span class="text-left w-12">Åtgärder</span>
+          }
+        </div>
+
+        @for (file of selectedAttachmentFiles; track file.name + '-' + $index; let i = $index) {
+          <div
+            class="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-2 border-t border-gray-100"
+          >
+            <span class="truncate">{{ file.name }}</span>
+            <span class="text-left text-sm text-gray-600 w-12 text-nowrap">{{
+              formatFileSize(file.size)
+            }}</span>
+            <button
+              type="button"
+              class="text-right text-sm text-red-600 hover:text-red-700 w-12"
+              [attr.aria-label]="'Ta bort ' + file.name"
+              (click)="removeAttachment(i)"
+            >
+              Ta bort
+            </button>
+          </div>
+        } @empty {
+          <div class="px-4 py-3 text-sm text-gray-500">Inga filer valda</div>
+        }
+      </div>
+    </div>
+
+    <div formGroupName="contact" class="space-y-4">
+      <h3 class="text-2xl font-semibold">Kontakt</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex flex-col gap-2">
+          <label for="ciContactName">Namn</label>
+          <input id="ciContactName" type="text" pInputText formControlName="name" />
+          @if (hasCreateInvoiceError('contact.name', 'required')) {
+            <small class="text-red-600" role="alert">Namn ar obligatoriskt.</small>
+          }
+          @if (hasCreateInvoiceError('contact.name', 'minlength')) {
+            <small class="text-red-600" role="alert">Minst 2 tecken kravs.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciContactEmail">Email</label>
+          <input id="ciContactEmail" type="email" pInputText formControlName="email" />
+          @if (hasCreateInvoiceError('contact.email', 'required')) {
+            <small class="text-red-600" role="alert">Email ar obligatorisk.</small>
+          }
+          @if (hasCreateInvoiceError('contact.email', 'email')) {
+            <small class="text-red-600" role="alert">Ogiltigt email-format.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ciContactPhone">Telefonnummer</label>
+          <input id="ciContactPhone" type="text" pInputText formControlName="phoneNumber" />
+          @if (hasCreateInvoiceError('contact.phoneNumber', 'required')) {
+            <small class="text-red-600" role="alert">Telefonnummer ar obligatoriskt.</small>
+          }
+          @if (hasCreateInvoiceError('contact.phoneNumber', 'pattern')) {
+            <small class="text-red-600" role="alert">Ogiltigt telefonnummer.</small>
+          }
+        </div>
+      </div>
+    </div>
+  </form>
+</app-modal>

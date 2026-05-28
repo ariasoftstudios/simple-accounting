@@ -1,0 +1,12 @@
+<a
+  [routerLink]="route"
+  class="inline-flex items-center px-3 py-2 text-sm font-medium transition-colors duration-200 border-b-2"
+  [class.text-blue-600]="isActive"
+  [class.border-blue-600]="isActive"
+  [class.text-gray-500]="!isActive"
+  [class.hover:text-gray-700]="!isActive"
+  [class.border-transparent]="!isActive"
+  [class.hover:border-blue-600/50]="!isActive"
+>
+  <span>{{ title }}</span>
+</a>

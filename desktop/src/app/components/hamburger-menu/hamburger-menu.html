@@ -1,0 +1,30 @@
+<p-drawer [(visible)]="visible">
+  <ng-template #headless>
+    <div class="flex flex-col h-full">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 pt-4">
+        <span class="font-semibold text-xl text-primary"> Menu </span>
+
+        <p-button icon="pi pi-times" rounded outlined class="h-8 w-8" (click)="close()"></p-button>
+      </div>
+
+      <!-- Menu -->
+      <ul class="list-none p-4 m-0">
+        @for (item of items; track $index) {
+          <li>
+            <a
+              pRipple
+              class="flex items-center gap-3 cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
+              (click)="onItemClick(item, $event)"
+            >
+              <i [class]="item.icon"></i>
+              <span class="font-medium">{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </ng-template>
+</p-drawer>
+
+<p-button icon="pi pi-bars" rounded (click)="visible = true"></p-button>

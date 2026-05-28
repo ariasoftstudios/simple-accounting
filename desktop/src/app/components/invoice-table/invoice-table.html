@@ -1,0 +1,72 @@
+<div class="mt-4 bg-white rounded-lg shadow p-6">
+  <p class="mb-2 text-sm text-red-600" role="alert" aria-live="polite">{{ errorMessage }}</p>
+  <div class="flex items-center justify-between mb-4">
+    <p class="mb-2 text-sm text-gray-500">Antal träffar: {{ invoices.length }}</p>
+
+    <p-button
+      label="Ny faktura"
+      icon="pi pi-plus"
+      (onClick)="newInvoiceClick.emit()"
+      aria-haspopup="dialog"
+    ></p-button>
+  </div>
+  <div class="rounded-lg overflow-hidden border border-gray-200">
+    <p-table [value]="invoices" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="invoiceName" style="width: 20%">
+          <p-sortIcon field="invoiceName"></p-sortIcon>
+          Namn på faktura
+        </th>
+        <th pSortableColumn="invoiceNumber" style="width: 20%">
+          <p-sortIcon field="invoiceNumber"></p-sortIcon>
+          Fakturanummer
+        </th>
+        <th pSortableColumn="createdAt" style="width: 20%">
+          <p-sortIcon field="createdAt"></p-sortIcon>
+          Skapad
+        </th>
+        <th pSortableColumn="type" style="width: 20%">
+          <p-sortIcon field="type"></p-sortIcon>
+          Kategori
+        </th>
+        <th pSortableColumn="price" style="width: 20%">
+          <p-sortIcon field="price"></p-sortIcon>
+          Pris
+        </th>
+        <th style="width: 20%"></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-invoice>
+      <tr>
+        <td>{{ invoice.invoiceName }}</td>
+        <td>{{ invoice.invoiceNumber }}</td>
+        <td>{{ invoice.createdAt }}</td>
+        <td><p-tag [value]="invoice.type" [severity]="getCategoryTag(invoice.type)" /></td>
+        <td>{{ invoice.price | currency: 'SEK' : 'symbol' : '1.0-0' : 'sv-SE' }}</td>
+        <td>
+          @if (invoice.attachmentPath) {
+            <a
+              [href]="'http://localhost:3000' + invoice.attachmentPath"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Öppna bilaga"
+            >
+              <i
+                class="fa-regular fa-file text-gray-600 hover:text-blue-600 text-lg cursor-pointer"
+              ></i>
+            </a>
+          }
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #footer>
+      <tr class="font-semibold border-t-2 border-gray-300">
+        <td colspan="4" class="text-right pr-4">Totalt</td>
+        <td>{{ totalPrice | currency: 'SEK' : 'symbol' : '1.0-0' : 'sv-SE' }}</td>
+        <td></td>
+      </tr>
+    </ng-template>
+  </p-table>
+  </div>
+</div>

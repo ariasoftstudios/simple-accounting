@@ -1,0 +1,14 @@
+<!-- Main App Layout -->
+<div class="min-h-screen bg-gray-100">
+  <!-- Header Component (outside of routes) -->
+  @if (authService.isLoggedIn()) {
+    <app-header></app-header>
+    <!-- Navigation Menu (below header, horizontal) -->
+    <app-navigation-menu-wrapper></app-navigation-menu-wrapper>
+  }
+  <!-- Main Content Area -->
+  <main class="flex-1">
+    <!-- Routes will render here -->
+    <router-outlet />
+  </main>
+</div>

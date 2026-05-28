@@ -1,0 +1,52 @@
+<div class="bg-white rounded-lg shadow p-6 space-y-4">
+  <div class="grid grid-cols-8 gap-4">
+    <div class="flex flex-col gap-2">
+      <label for="namn">Namn på faktura</label>
+      <input id="namn" type="text" pInputText [(ngModel)]="filters.invoiceName" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="fakturanummer">Fakturanummer</label>
+      <input id="fakturanummer" type="text" pInputText [(ngModel)]="filters.invoiceNumber" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="kund">Kund</label>
+      <input id="kund" type="text" pInputText [(ngModel)]="filters.customer" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="skapad">Skapad från</label>
+      <p-datepicker inputId="skapad" [showIcon]="true" [(ngModel)]="filters.fromDate">
+      </p-datepicker>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="uppdaterad">Till</label>
+      <p-datepicker inputId="uppdaterad" [showIcon]="true" [(ngModel)]="filters.toDate">
+      </p-datepicker>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="typ">Kategori</label>
+      <p-select
+        inputId="typ"
+        [options]="productCategoryOptions"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Välj kategori"
+        [(ngModel)]="filters.productCategoryId"
+      >
+      </p-select>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="invisible">_</label>
+      <p-button label="Filtrera" styleClass="w-full" [loading]="isLoading" (onClick)="onSubmit()" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="invisible">_</label>
+      <p-button label="Återställ" styleClass="w-full" severity="secondary" (onClick)="onReset()" />
+    </div>
+  </div>
+</div>
